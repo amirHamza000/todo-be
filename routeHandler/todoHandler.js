@@ -43,9 +43,34 @@ router.get('/', async (req, res) => {
 
 
 // GET A TODO by ID
-router.get("/:id", async (req, res) => {
 
+router.get('/:id', async (req, res) => {
+  try {
+    const todo = await ToDo.findById(req.params.id);
+
+    if (!todo) {
+      return res.status(404).json({
+        code: 404,
+        status: 'failed',
+        msg: 'ToDo not found',
+      });
+    }
+
+    return res.status(200).json({
+      code: 200,
+      status: 'success',
+      msg: 'ToDo retrieved successfully',
+      data: todo,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      status: 'failed',
+      msg: error.message,
+    });
+  }
 });
+
 
 // POST A TODO
 router.post('/', async (req, res) => {
