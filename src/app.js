@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express')
 const app = express()
 const todoHandler = require('../routeHandler/todoHandler')
+const categoryHandler = require('../routeHandler/categoryHandler')
 const port = 3000
 require("../config/db")
 
@@ -12,6 +13,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/todo", todoHandler);
+app.use("/category", categoryHandler);
 
 app.listen(port, () => {
   console.log(`ToDo app running on port ${port}`)
