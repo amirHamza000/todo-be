@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const todoHandler = require('../routeHandler/todoHandler')
 const categoryHandler = require('../routeHandler/categoryHandler')
+const userHandler = require('../routeHandler/userHandler')
 const port = 3000
 require("../config/db")
 
@@ -14,6 +15,7 @@ app.get('/', (req, res) => {
 
 app.use("/todo", todoHandler);
 app.use("/category", categoryHandler);
+app.use("/user",userHandler );
 
 app.listen(port, () => {
   console.log(`ToDo app running on port ${port}`)
