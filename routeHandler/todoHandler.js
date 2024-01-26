@@ -138,9 +138,33 @@ router.put("/:id", async (req, res) => {
 
 
 
-// DELETE TODO
-router.delete("/:id", (req, res) => {
 
+// DELETE TODO by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedToDo = await ToDo.findByIdAndDelete(req.params.id);
+
+    if (!deletedToDo) {
+      return res.status(404).json({
+        code: 404,
+        status: 'failed',
+        msg: 'ToDo not found',
+      });
+    }
+
+    return res.status(200).json({
+      code: 200,
+      status: 'success',
+      msg: 'ToDo deleted successfully',
+      data: deletedToDo,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      code: 500,
+      status: 'failed',
+      msg: error.message,
+    });
+  }
 });
 
 module.exports = router;
