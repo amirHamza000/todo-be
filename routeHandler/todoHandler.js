@@ -1,10 +1,11 @@
 const express = require("express");
 const ToDo = require("../models/toDoCreateModel");
 const router = express.Router();
+const isAuthenticate = require('../middleware/Authentication.middleware')
 
 
 // GET ALL THE TODO'S
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticate, async (req, res) => {
   try {
  
     const { category, status, page = 1, limit = 10 } = req.query;
@@ -15,7 +16,7 @@ router.get('/', async (req, res) => {
 
     const hasFilters = Object.keys(filter).length > 0;
 
-    const query = hasFilters ? ToDo.find(filter) : ToDo.find();
+    const query = hasFilters ? ToDo.find(filter).populate('user') : ToDo.find().populate('user');
 
     const todos = await query.skip((page - 1) * limit).limit(parseInt(limit)).exec();
     const totalCount = hasFilters ? await ToDo.countDocuments(filter) : await ToDo.countDocuments();
@@ -44,7 +45,7 @@ router.get('/', async (req, res) => {
 
 // GET A TODO by ID
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',isAuthenticate, async (req, res) => {
   try {
     const todo = await ToDo.findById(req.params.id);
 
@@ -73,9 +74,12 @@ router.get('/:id', async (req, res) => {
 
 
 // POST A TODO
-router.post('/', async (req, res) => {
+router.post('/',isAuthenticate, async (req, res) => {
   try {
-    const response = await ToDo.create(req.body);
+    const response = await ToDo.create({
+      ...req.body, 
+      user:req.userId
+    });
     return res.status(201).json({
       code: 201,
       status: 'success',
@@ -92,7 +96,7 @@ router.post('/', async (req, res) => {
 });
 
 // POST MULTIPLE TODO'S
-router.post("/multiple", async (req, res) => {
+router.post("/multiple",isAuthenticate, async (req, res) => {
   try {
     const response = await ToDo.insertMany(req.body)
     return res.status(201).json({
@@ -111,12 +115,12 @@ router.post("/multiple", async (req, res) => {
 }); 
 
 // PUT OR UPDATE A TODO
-router.put("/:id", async (req, res) => {
+router.put("/:id",isAuthenticate, async (req, res) => {
   try {
     const { status, ...otherFields } = req.body;
     if (status) {
     
-      if (status.toLowerCase() === 'active' || status.toLowerCase() === 'inactive') {
+      if (status.toLowerCase() === 'pending' || status.toLowerCase() === 'active' || status.toLowerCase() === 'done') {
         const response = await ToDo.findByIdAndUpdate(
           { _id: req.params.id },
           {
@@ -141,7 +145,7 @@ router.put("/:id", async (req, res) => {
         return res.status(400).json({
           code: 400,
           status: "failed",
-          msg: "Invalid value for 'status'. It must be 'active' or 'inactive'.",
+          msg: "Invalid value for 'status'. It must be 'pending', 'active' or  'done'.",
         });
       }
     } else {
@@ -165,7 +169,7 @@ router.put("/:id", async (req, res) => {
 
 
 // DELETE TODO by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',isAuthenticate, async (req, res) => {
   try {
     const deletedToDo = await ToDo.findByIdAndDelete(req.params.id);
 

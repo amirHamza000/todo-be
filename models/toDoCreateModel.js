@@ -17,19 +17,23 @@ const toDoCreateSchema = new Schema({
 		status: {
 			type: String,
 			required: true,
-			enum: ["active", "inactive"],
+			default:'pending',
+			enum: ["pending", "active", "done"],
 		},
 		description: String,
 
 		date: {
 			type: Date,
-			
+
 			default: Date.now
 		},
+		user: {
+			type: mongoose.Types.ObjectId,
+			ref: "User"
+		}
 
 	}, {
 		timestamps: true,
-		collection: "toDo",
 	}
 
 );

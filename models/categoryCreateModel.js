@@ -24,7 +24,6 @@ const categorySchema = new Schema({
 
 	}, {
 		timestamps: true,
-		collection: "Category",
 	}
 
 );

@@ -9,22 +9,22 @@ const userCreateSChema = new Schema({
 			type: String,
 			required: true,
 		},
-        last_name:{
-            type: String,
+		last_name: {
+			type: String,
 			required: true,
-        },
+		},
 
 		email: {
 			type: String,
 			required: true
 		},
-        password:{
+		password: {
 			type: String,
 			required: true
 		},
 		status: {
 			type: String,
-            default:'active',
+			default: 'active',
 			enum: ["active", "inactive"],
 		},
 
@@ -32,10 +32,13 @@ const userCreateSChema = new Schema({
 			type: Date,
 			default: Date.now
 		},
+		toDos: [{
+			type: mongoose.Types.ObjectId,
+			ref: "Todo"
+		}]
 
 	}, {
 		timestamps: true,
-		collection: "Users",
 	}
 
 );

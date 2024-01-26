@@ -1,10 +1,11 @@
 const express = require("express");
 const Category = require("../models/categoryCreateModel");
 const router = express.Router();
+const isAuthenticate = require('../middleware/Authentication.middleware')
 
 
 // GET ALL CATEGORY
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticate, async (req, res) => {
     try {
         const response = await Category.find();
         return res.status(200).json({
@@ -25,7 +26,7 @@ router.get('/', async (req, res) => {
 
 
 // POST A CATEGORY
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticate, async (req, res) => {
     try {
         const response = await Category.create(req.body);
         return res.status(201).json({
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
 
 
 //  UPDATE A CATEGORY
-router.put("/:id", async (req, res) => {
+router.put("/:id", isAuthenticate, async (req, res) => {
     try {
 
         const response = await Category.findByIdAndUpdate({
@@ -77,7 +78,7 @@ router.put("/:id", async (req, res) => {
 
 
 // DELETE CATEGORY BY ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuthenticate, async (req, res) => {
     try {
         const deletedCategory = await Category.findByIdAndDelete(req.params.id);
 
