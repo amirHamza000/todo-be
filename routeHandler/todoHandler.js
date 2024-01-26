@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST MULTIPLE TODO
+// POST MULTIPLE TODO'S
 router.post("/multiple", async (req, res) => {
   try {
     const response = await ToDo.insertMany(req.body)
@@ -110,7 +110,7 @@ router.post("/multiple", async (req, res) => {
   }
 }); 
 
-// PUT or update TODO
+// PUT OR UPDATE A TODO
 router.put("/:id", async (req, res) => {
   try {
     const { status, ...otherFields } = req.body;
