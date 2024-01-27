@@ -1,5 +1,6 @@
 const express = require("express");
 const ToDo = require("../models/toDoCreateModel");
+const User = require("../models/userCreateModel");
 const router = express.Router();
 const isAuthenticate = require('../middleware/Authentication.middleware')
 
@@ -73,18 +74,25 @@ router.get('/:id',isAuthenticate, async (req, res) => {
 });
 
 
-// POST A TODO
-router.post('/',isAuthenticate, async (req, res) => {
+router.post('/', isAuthenticate, async (req, res) => {
   try {
-    const response = await ToDo.create({
-      ...req.body, 
-      user:req.userId
+    // Create ToDo
+    const todo = await ToDo.create({
+      ...req.body,
+      user: req.userId
     });
+
+    // Update user with the created ToDo
+    await User.updateOne(
+      { _id: req.userId },
+      { $push: { toDos: todo._id } }
+    );
+
     return res.status(201).json({
       code: 201,
       status: 'success',
       msg: 'ToDo created successfully',
-      response,
+      response: todo,
     });
   } catch (error) {
     return res.status(400).json({
@@ -94,6 +102,7 @@ router.post('/',isAuthenticate, async (req, res) => {
     });
   }
 });
+
 
 // POST MULTIPLE TODO'S
 router.post("/multiple",isAuthenticate, async (req, res) => {
